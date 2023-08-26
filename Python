@@ -10,10 +10,11 @@ win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tennis Game")
 
 # Define colors
-WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 
-# Define game elements
+# Define game elements with new colors
 ball = pygame.Rect(WIDTH // 2 - 15, HEIGHT // 2 - 15, 30, 30)
 player = pygame.Rect(WIDTH - 20, HEIGHT // 2 - 70, 10, 140)
 opponent = pygame.Rect(10, HEIGHT // 2 - 70, 10, 140)
@@ -66,10 +67,10 @@ while True:
 
     # Draw everything
     win.fill(BLACK)
-    pygame.draw.rect(win, WHITE, player)
-    pygame.draw.rect(win, WHITE, opponent)
-    pygame.draw.ellipse(win, WHITE, ball)
-    pygame.draw.aaline(win, WHITE, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))
+    pygame.draw.rect(win, YELLOW, player)
+    pygame.draw.rect(win, BLUE, opponent)
+    pygame.draw.ellipse(win, YELLOW, ball)
+    pygame.draw.aaline(win, YELLOW, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))
 
     pygame.display.flip()
     clock.tick(60)
