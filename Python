@@ -5,72 +5,38 @@ import random
 pygame.init()
 
 # Set up display
-WIDTH, HEIGHT = 800, 600
-win = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Tennis Game")
+# ... (same as before)
 
 # Define colors
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-BLACK = (0, 0, 0)
+# ... (same as before)
+
+# Load sound effects
+hit_sound = pygame.mixer.Sound("hit.wav")
+score_sound = pygame.mixer.Sound("score.wav")
 
 # Define game elements with new colors
-ball = pygame.Rect(WIDTH // 2 - 15, HEIGHT // 2 - 15, 30, 30)
-player = pygame.Rect(WIDTH - 20, HEIGHT // 2 - 70, 10, 140)
-opponent = pygame.Rect(10, HEIGHT // 2 - 70, 10, 140)
-
-ball_speed_x = 7 * random.choice((1, -1))
-ball_speed_y = 7 * random.choice((1, -1))
-player_speed = 0
-opponent_speed = 7
+# ... (same as before)
 
 # Set up clock
-clock = pygame.time.Clock()
+# ... (same as before)
 
 # Main game loop
 while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                player_speed -= 7
-            if event.key == pygame.K_DOWN:
-                player_speed += 7
-
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP:
-                player_speed += 7
-            if event.key == pygame.K_DOWN:
-                player_speed -= 7
-
-    # Update game elements
-    ball.x += ball_speed_x
-    ball.y += ball_speed_y
-    player.y += player_speed
-
-    # Ball collision with walls
-    if ball.top <= 0 or ball.bottom >= HEIGHT:
-        ball_speed_y *= -1
+    # ... (same as before)
 
     # Ball collision with players
     if ball.colliderect(player) or ball.colliderect(opponent):
         ball_speed_x *= -1
+        hit_sound.play()
 
-    # Opponent AI
-    if opponent.top < ball.y:
-        opponent.top += opponent_speed
-    if opponent.bottom > ball.y:
-        opponent.bottom -= opponent_speed
+    # Ball out of bounds (scoring)
+    if ball.left <= 0 or ball.right >= WIDTH:
+        ball_speed_x *= -1
+        ball.x = WIDTH // 2 - 15
+        ball.y = HEIGHT // 2 - 15
+        score_sound.play()
 
-    # Draw everything
-    win.fill(BLACK)
-    pygame.draw.rect(win, YELLOW, player)
-    pygame.draw.rect(win, BLUE, opponent)
-    pygame.draw.ellipse(win, YELLOW, ball)
-    pygame.draw.aaline(win, YELLOW, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))
+    # ... (same as before)
 
     pygame.display.flip()
     clock.tick(60)
