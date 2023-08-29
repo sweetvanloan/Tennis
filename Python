@@ -1,3 +1,12 @@
+# Initialize pygame
+pygame.init()
+
+# Load sound effects
+hit_sound = pygame.mixer.Sound("hit.wav")
+score_sound = pygame.mixer.Sound("score.wav")
+
+# Set up display
+
 import pygame
 import random
 
