@@ -1,12 +1,3 @@
-# Initialize pygame
-pygame.init()
-
-# Load sound effects
-hit_sound = pygame.mixer.Sound("hit.wav")
-score_sound = pygame.mixer.Sound("score.wav")
-
-# Set up display
-
 import pygame
 import random
 
@@ -20,32 +11,63 @@ pygame.init()
 # ... (same as before)
 
 # Load sound effects
-hit_sound = pygame.mixer.Sound("hit.wav")
-score_sound = pygame.mixer.Sound("score.wav")
-
-# Define game elements with new colors
 # ... (same as before)
 
-# Set up clock
+# Define game elements with new colors and positions
+player_1 = pygame.Rect(WIDTH - 20, HEIGHT // 4 - 35, 10, 70)
+player_2 = pygame.Rect(WIDTH - 20, HEIGHT * 3 // 4 - 35, 10, 70)
+player_3 = pygame.Rect(10, HEIGHT // 4 - 35, 10, 70)
+player_4 = pygame.Rect(10, HEIGHT * 3 // 4 - 35, 10, 70)
+
 # ... (same as before)
 
 # Main game loop
 while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                player_speed -= 7
+            if event.key == pygame.K_DOWN:
+                player_speed += 7
+
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_UP:
+                player_speed += 7
+            if event.key == pygame.K_DOWN:
+                player_speed -= 7
+
     # ... (same as before)
 
+    # Update game elements
+    player_1.y += player_speed
+    player_2.y += player_speed
+    player_3.y += player_speed
+    player_4.y += player_speed
+
     # Ball collision with players
-    if ball.colliderect(player) or ball.colliderect(opponent):
+    if (
+        ball.colliderect(player_1)
+        or ball.colliderect(player_2)
+        or ball.colliderect(player_3)
+        or ball.colliderect(player_4)
+    ):
         ball_speed_x *= -1
         hit_sound.play()
 
-    # Ball out of bounds (scoring)
-    if ball.left <= 0 or ball.right >= WIDTH:
-        ball_speed_x *= -1
-        ball.x = WIDTH // 2 - 15
-        ball.y = HEIGHT // 2 - 15
-        score_sound.play()
-
     # ... (same as before)
+
+    # Draw everything
+    win.fill(BLACK)
+    pygame.draw.rect(win, YELLOW, player_1)
+    pygame.draw.rect(win, YELLOW, player_2)
+    pygame.draw.rect(win, BLUE, player_3)
+    pygame.draw.rect(win, BLUE, player_4)
+    pygame.draw.ellipse(win, YELLOW, ball)
+    pygame.draw.aaline(win, YELLOW, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))
 
     pygame.display.flip()
     clock.tick(60)
