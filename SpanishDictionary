@@ -1,0 +1,9 @@
+# English to Spanish translation dictionary
+translation = {
+    "Tennis Game": "Juego de Tenis",
+    "Player 1": "Jugador 1",
+    "Player 2": "Jugador 2",
+    "Press Enter to Start": "Presiona Enter para Comenzar",
+    "High Scores": "Puntajes Altos",
+    # Add more translations as needed
+}
