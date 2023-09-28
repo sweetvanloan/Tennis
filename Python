@@ -1,6 +1,11 @@
 import pygame
 import random
-import pickle
+
+# Constants for colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 
 # Initialize pygame
 pygame.init()
@@ -10,73 +15,81 @@ WIDTH, HEIGHT = 800, 600
 win = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tennis Game")
 
-# Load sprite images and fonts
-# ... (same as before)
+# Load sprite images
+player_image = pygame.image.load("player.png")
+opponent_image = pygame.image.load("opponent.png")
+ball_image = pygame.image.load("ball.png")
 
-# Initialize player names
-player1_name = "Player 1"
-player2_name = "Player 2"
+# Load sound effects
+hit_sound = pygame.mixer.Sound("hit.wav")
+score_sound = pygame.mixer.Sound("score.wav")
 
-# Initialize high scores
-high_scores = []
+# Define game elements
+ball = pygame.Rect(WIDTH // 2 - 15, HEIGHT // 2 - 15, 30, 30)
+player = pygame.Rect(WIDTH - 20, HEIGHT // 2 - 70, 10, 140)
+opponent = pygame.Rect(10, HEIGHT // 2 - 70, 10, 140)
 
-# Load high scores from a file
-try:
-    with open("high_scores.pickle", "rb") as file:
-        high_scores = pickle.load(file)
-except FileNotFoundError:
-    pass
+# Initialize game variables
+ball_speed_x = 7 * random.choice((1, -1))
+ball_speed_y = 7 * random.choice((1, -1))
+player_speed = 0
+opponent_speed = 7
 
-# Define game elements with sprite images
-# ... (same as before)
+# Set up clock
+clock = pygame.time.Clock()
 
-# Define font for player names and high scores
-font = pygame.font.Font(None, 36)
-
-# Function to display player names
-def display_player_names():
-    player1_text = font.render(f"{player1_name}", True, (255, 255, 255))
-    player2_text = font.render(f"{player2_name}", True, (255, 255, 255))
-    win.blit(player1_text, (WIDTH // 4, 10))
-    win.blit(player2_text, (3 * WIDTH // 4 - player2_text.get_width(), 10))
-
-# Function to display high scores
-def display_high_scores():
-    high_scores.sort(reverse=True)  # Sort high scores in descending order
-    y = 50
-    for i, score in enumerate(high_scores[:10]):
-        score_text = font.render(f"{i + 1}. {score}", True, (255, 255, 255))
-        win.blit(score_text, (WIDTH // 2 - score_text.get_width() // 2, y))
-        y += 30
-
-# Main game loop
-while True:
+# Function to handle player input
+def handle_input():
+    nonlocal player_speed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            # Save high scores to a file before quitting
-            with open("high_scores.pickle", "wb") as file:
-                pickle.dump(high_scores, file)
             pygame.quit()
             exit()
 
-        # Allow players to enter their names
-        if event.type == pygame.KEYDOWN:
-            if player1_name == "Player 1":
-                if event.key == pygame.K_RETURN:
-                    player1_name = player1_name_input
-            if player2_name == "Player 2":
-                if event.key == pygame.K_RETURN:
-                    player2_name = player2_name_input
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_UP]:
+        player_speed = -7
+    elif keys[pygame.K_DOWN]:
+        player_speed = 7
+    else:
+        player_speed = 0
 
-    # ... (same as before)
+# Function to update game elements
+def update_game_elements():
+    nonlocal ball_speed_x, ball_speed_y
 
-    # Draw everything
-    win.fill((0, 0, 0))
-    display_player_names()
-    display_high_scores()
+    ball.x += ball_speed_x
+    ball.y += ball_speed_y
+    player.y += player_speed
+
+    # Ball collision with walls
+    if ball.top <= 0 or ball.bottom >= HEIGHT:
+        ball_speed_y *= -1
+
+    # Ball collision with players
+    if ball.colliderect(player) or ball.colliderect(opponent):
+        ball_speed_x *= -1
+        hit_sound.play()
+
+    # Opponent AI
+    if opponent.top < ball.y:
+        opponent.top += opponent_speed
+    if opponent.bottom > ball.y:
+        opponent.bottom -= opponent_speed
+
+# Function to draw game elements
+def draw_game_elements():
+    win.fill(BLACK)
     win.blit(player_image, player)
     win.blit(opponent_image, opponent)
     win.blit(ball_image, ball)
+    pygame.draw.aaline(win, YELLOW, (WIDTH // 2, 0), (WIDTH // 2, HEIGHT))
+
+# Main game loop
+while True:
+    handle_input()
+    update_game_elements()
+    draw_game_elements()
 
     pygame.display.flip()
     clock.tick(60)
